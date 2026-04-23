@@ -9,6 +9,7 @@ import Memory from '#models/memory'
 import JournalEntry from '#models/journal_entry'
 import Article from '#models/article'
 import ChatRoom from '#models/chat_room'
+import Role from '#models/role'
 
 const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
   uids: ['email'],
@@ -61,6 +62,17 @@ export default class User extends compose(BaseModel, AuthFinder) {
     pivotColumns: ['joined_at'],
   })
   declare chatRooms: ManyToMany<typeof ChatRoom>
+
+  @manyToMany(() => Role, {
+    pivotTable: 'role_user',
+    pivotTimestamps: true,
+  })
+  declare roles: ManyToMany<typeof Role>
+
+  async hasRole(name: string): Promise<boolean> {
+    const roles = await this.related('roles').query().where('name', name)
+    return roles.length > 0
+  }
 
   static accessTokens = DbAccessTokensProvider.forModel(User, {
     expiresIn: '1 hour',

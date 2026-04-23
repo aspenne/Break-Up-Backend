@@ -1,5 +1,6 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import User from '#models/user'
+import Role from '#models/role'
 import { registerValidator, loginValidator, refreshValidator } from '#validators/auth'
 import db from '@adonisjs/lucid/services/db'
 import { DateTime } from 'luxon'
@@ -16,11 +17,18 @@ export default class AuthController {
       avatarEmoji: data.avatarEmoji ?? '😊',
     })
 
+    // Attribuer automatiquement le rôle "user"
+    const userRole = await Role.findBy('name', 'user')
+    if (userRole) {
+      await user.related('roles').attach([userRole.id])
+    }
+    await user.load('roles')
+
     const accessToken = await User.accessTokens.create(user, ['*'])
     const refreshToken = await User.refreshTokens.create(user, ['*'])
 
     return response.created({
-      user: user.serialize(),
+      user: { ...user.serialize(), roles: user.roles.map((r) => r.name) },
       accessToken: accessToken.value!.release(),
       refreshToken: refreshToken.value!.release(),
     })
@@ -29,12 +37,13 @@ export default class AuthController {
   async login({ request, response }: HttpContext) {
     const { email, password } = await request.validateUsing(loginValidator)
     const user = await User.verifyCredentials(email, password)
+    await user.load('roles')
 
     const accessToken = await User.accessTokens.create(user, ['*'])
     const refreshToken = await User.refreshTokens.create(user, ['*'])
 
     return response.ok({
-      user: user.serialize(),
+      user: { ...user.serialize(), roles: user.roles.map((r) => r.name) },
       accessToken: accessToken.value!.release(),
       refreshToken: refreshToken.value!.release(),
     })
@@ -83,6 +92,9 @@ export default class AuthController {
 
   async me({ auth, response }: HttpContext) {
     const user = auth.getUserOrFail()
-    return response.ok({ user: user.serialize() })
+    await user.load('roles')
+    return response.ok({
+      user: { ...user.serialize(), roles: user.roles.map((r) => r.name) },
+    })
   }
 }
