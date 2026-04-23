@@ -87,6 +87,14 @@ router
   .prefix('api/blog')
   .use(middleware.auth())
 
+// ============== BLOG (admin only) ==============
+router
+  .group(() => {
+    router.post('articles', [ArticlesController, 'store'])
+  })
+  .prefix('api/blog')
+  .use([middleware.auth(), middleware.admin()])
+
 // ============== JOURNAL ==============
 router
   .group(() => {

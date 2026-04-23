@@ -1,7 +1,8 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import Article from '#models/article'
 import ArticleFavorite from '#models/article_favorite'
-import { listArticlesValidator } from '#validators/article'
+import { listArticlesValidator, createArticleValidator } from '#validators/article'
+import { DateTime } from 'luxon'
 
 export default class ArticlesController {
   async index({ request, response }: HttpContext) {
@@ -18,6 +19,22 @@ export default class ArticlesController {
     const articles = await query.paginate(page, limit)
 
     return response.ok(articles)
+  }
+
+  async store({ request, response }: HttpContext) {
+    const data = await request.validateUsing(createArticleValidator)
+
+    const article = await Article.create({
+      title: data.title,
+      excerpt: data.excerpt ?? data.content.slice(0, 200),
+      content: data.content,
+      category: data.category,
+      readTimeMinutes: data.readTimeMinutes,
+      imageUrl: data.imageUrl ?? null,
+      publishedAt: DateTime.now(),
+    })
+
+    return response.created(article)
   }
 
   async show({ params, response }: HttpContext) {
