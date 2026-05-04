@@ -29,6 +29,10 @@ export default class JournalEntry extends BaseModel {
     | 'hopeful'
     | 'growing'
     | 'thriving'
+    | 'other'
+
+  @column()
+  declare customEmotion: string | null
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime

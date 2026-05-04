@@ -30,6 +30,7 @@ export default class JournalEntriesController {
       title: data.title,
       content: data.content,
       emotion: data.emotion,
+      customEmotion: data.emotion === 'other' ? (data.customEmotion ?? null) : null,
     })
 
     return response.created(entry)
