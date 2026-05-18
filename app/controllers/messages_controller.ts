@@ -47,7 +47,7 @@ export default class MessagesController {
     const message = await Message.create({
       chatRoomId: room.id,
       senderId: user.id,
-      senderName: data.senderName ?? `${user.firstName} ${user.lastName}`,
+      senderName: data.senderName ?? user.pseudo,
       content: data.content,
       isSystem: false,
     })

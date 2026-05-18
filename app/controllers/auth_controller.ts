@@ -12,8 +12,7 @@ export default class AuthController {
     const user = await User.create({
       email: data.email,
       password: data.password,
-      firstName: data.firstName,
-      lastName: data.lastName,
+      pseudo: data.pseudo,
       avatarEmoji: data.avatarEmoji ?? '😊',
     })
 

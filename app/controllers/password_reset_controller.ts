@@ -71,7 +71,7 @@ export default class PasswordResetController {
                         <h1 style="margin:0;font-size:22px;color:#1a1a2e;">Réinitialisation du mot de passe</h1>
                       </td></tr>
                       <tr><td align="center" style="padding-bottom:28px;">
-                        <p style="margin:0;font-size:15px;color:#6b7280;">Bonjour ${user.firstName}, voici ton code :</p>
+                        <p style="margin:0;font-size:15px;color:#6b7280;">Bonjour ${user.pseudo}, voici ton code :</p>
                       </td></tr>
                       <tr><td align="center" style="padding-bottom:28px;">
                         <div style="background-color:#F5F0FF;border-radius:12px;padding:20px 32px;display:inline-block;letter-spacing:8px;font-size:32px;font-weight:700;color:#7C3AED;">

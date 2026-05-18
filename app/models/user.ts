@@ -27,10 +27,7 @@ export default class User extends compose(BaseModel, AuthFinder) {
   declare password: string
 
   @column()
-  declare firstName: string
-
-  @column()
-  declare lastName: string
+  declare pseudo: string
 
   @column()
   declare avatarEmoji: string

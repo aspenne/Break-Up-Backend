@@ -2,8 +2,7 @@ import vine from '@vinejs/vine'
 
 export const updateProfileValidator = vine.compile(
   vine.object({
-    firstName: vine.string().trim().minLength(1).maxLength(50).optional(),
-    lastName: vine.string().trim().minLength(1).maxLength(50).optional(),
+    pseudo: vine.string().trim().minLength(2).maxLength(50).optional(),
     avatarEmoji: vine.string().trim().maxLength(10).optional(),
     breakupDate: vine
       .string()
