@@ -62,19 +62,25 @@ export default class PasswordResetController {
             .html(`
               <!DOCTYPE html>
               <html>
+              <head>
+                <meta charset="utf-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              </head>
               <body style="margin:0;padding:0;background-color:#FDF6EC;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
                 <table width="100%" cellpadding="0" cellspacing="0" style="padding:40px 20px;">
                   <tr><td align="center">
-                    <table width="100%" style="max-width:420px;background-color:#ffffff;border-radius:16px;padding:40px 32px;">
-                      <tr><td align="center" style="padding-bottom:24px;font-size:48px;">💜</td></tr>
+                    <table width="100%" style="max-width:420px;background-color:#ffffff;border-radius:16px;padding:40px 32px;box-shadow:0 2px 12px rgba(14,165,233,0.10);">
+                      <tr><td align="center" style="padding-bottom:24px;">
+                        <span style="font-size:48px;">💙</span>
+                      </td></tr>
                       <tr><td align="center" style="padding-bottom:8px;">
-                        <h1 style="margin:0;font-size:22px;color:#1a1a2e;">Réinitialisation du mot de passe</h1>
+                        <h1 style="margin:0;font-size:22px;color:#0c4a6e;font-weight:600;">Réinitialisation du mot de passe</h1>
                       </td></tr>
                       <tr><td align="center" style="padding-bottom:28px;">
-                        <p style="margin:0;font-size:15px;color:#6b7280;">Bonjour ${user.pseudo}, voici ton code :</p>
+                        <p style="margin:0;font-size:15px;color:#6b7280;line-height:1.5;">Bonjour ${user.pseudo}, voici ton code de réinitialisation :</p>
                       </td></tr>
                       <tr><td align="center" style="padding-bottom:28px;">
-                        <div style="background-color:#F5F0FF;border-radius:12px;padding:20px 32px;display:inline-block;letter-spacing:8px;font-size:32px;font-weight:700;color:#7C3AED;">
+                        <div style="background-color:#E0F2FE;border-radius:12px;padding:20px 32px;display:inline-block;letter-spacing:8px;font-size:32px;font-weight:700;color:#0369A1;">
                           ${code}
                         </div>
                       </td></tr>
