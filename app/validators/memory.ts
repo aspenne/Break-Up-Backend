@@ -2,6 +2,7 @@ import vine from '@vinejs/vine'
 
 export const createMemoryValidator = vine.compile(
   vine.object({
+    assetId: vine.string().trim().maxLength(255).optional(),
     uri: vine.string().trim().maxLength(500),
     thumbnailUri: vine.string().trim().maxLength(500).optional(),
     dateTaken: vine

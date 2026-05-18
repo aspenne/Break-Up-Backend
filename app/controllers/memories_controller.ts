@@ -22,8 +22,28 @@ export default class MemoriesController {
     const user = auth.getUserOrFail()
     const data = await request.validateUsing(createMemoryValidator)
 
-    const memory = await Memory.create({
+    // Upsert by (user_id, asset_id) so the same photo can't be tracked twice
+    let memory = data.assetId
+      ? await Memory.query()
+          .where('userId', user.id)
+          .where('assetId', data.assetId)
+          .first()
+      : null
+
+    if (memory) {
+      memory.merge({
+        uri: data.uri,
+        thumbnailUri: data.thumbnailUri ?? memory.thumbnailUri,
+        dateTaken: data.dateTaken ? DateTime.fromISO(data.dateTaken) : memory.dateTaken,
+        stage: data.stage ?? memory.stage,
+      })
+      await memory.save()
+      return response.ok(memory)
+    }
+
+    memory = await Memory.create({
       userId: user.id,
+      assetId: data.assetId ?? null,
       uri: data.uri,
       thumbnailUri: data.thumbnailUri ?? null,
       dateTaken: data.dateTaken ? DateTime.fromISO(data.dateTaken) : null,

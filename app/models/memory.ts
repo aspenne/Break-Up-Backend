@@ -11,6 +11,9 @@ export default class Memory extends BaseModel {
   declare userId: number
 
   @column()
+  declare assetId: string | null
+
+  @column()
   declare uri: string
 
   @column()
