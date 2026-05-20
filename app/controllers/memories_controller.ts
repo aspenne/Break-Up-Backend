@@ -1,4 +1,5 @@
 import type { HttpContext } from '@adonisjs/core/http'
+import db from '@adonisjs/lucid/services/db'
 import Memory from '#models/memory'
 import { createMemoryValidator, updateMemoryValidator } from '#validators/memory'
 import { DateTime } from 'luxon'
@@ -27,14 +28,15 @@ export default class MemoriesController {
   async stats({ auth, response }: HttpContext) {
     const user = auth.getUserOrFail()
 
-    const rows = await Memory.query()
-      .where('userId', user.id)
+    const rows = await db
+      .from('memories')
+      .where('user_id', user.id)
       .select('stage')
       .count('* as count')
       .groupBy('stage')
 
     const byStage: Record<string, number> = {}
-    for (const r of rows as unknown as Array<{ stage: string; count: string | number }>) {
+    for (const r of rows as Array<{ stage: string; count: string | number }>) {
       byStage[r.stage] = Number(r.count)
     }
 
