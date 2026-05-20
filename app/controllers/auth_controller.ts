@@ -1,9 +1,8 @@
 import type { HttpContext } from '@adonisjs/core/http'
+import { Secret } from '@adonisjs/core/helpers'
 import User from '#models/user'
 import Role from '#models/role'
 import { registerValidator, loginValidator, refreshValidator } from '#validators/auth'
-import db from '@adonisjs/lucid/services/db'
-import { DateTime } from 'luxon'
 
 export default class AuthController {
   async register({ request, response }: HttpContext) {
@@ -51,28 +50,20 @@ export default class AuthController {
   async refresh({ request, response }: HttpContext) {
     const { refreshToken } = await request.validateUsing(refreshValidator)
 
-    // Find the refresh token in the database
-    // The token format is prefix + base64(id.secret)
-    // We look for unexpired refresh tokens
-    const tokenRecord = await db
-      .from('auth_access_tokens')
-      .where('type', 'refresh_token')
-      .where(function (query) {
-        query.whereNull('expires_at').orWhere('expires_at', '>', DateTime.now().toSQL())
-      })
-      .orderBy('created_at', 'desc')
-      .first()
+    // Verify the refresh token against the DB using the framework's
+    // token provider (it does the hash comparison for us).
+    const tokenProvider = User.refreshTokens
+    const verified = await tokenProvider.verify(new Secret(refreshToken))
 
-    if (!tokenRecord) {
+    if (!verified) {
       return response.unauthorized({ message: 'Invalid or expired refresh token' })
     }
 
-    const user = await User.find(tokenRecord.tokenable_id)
+    const user = await User.find(verified.tokenableId)
     if (!user) {
       return response.unauthorized({ message: 'User not found' })
     }
 
-    // Issue a new access token
     const newAccessToken = await User.accessTokens.create(user, ['*'])
 
     return response.ok({

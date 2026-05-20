@@ -67,7 +67,7 @@ export default class User extends compose(BaseModel, AuthFinder) {
   declare roles: ManyToMany<typeof Role>
 
   async hasRole(name: string): Promise<boolean> {
-    const roles = await this.related('roles').query().where('name', name)
+    const roles = await (this as User).related('roles').query().where('name', name)
     return roles.length > 0
   }
 
