@@ -6,15 +6,13 @@ test.group('Auth - Register', () => {
     const response = await client.post('/api/auth/register').json({
       email: 'new@test.com',
       password: 'password123',
-      firstName: 'New',
-      lastName: 'User',
+      pseudo: 'NewUser',
     })
 
     response.assertStatus(201)
     assert.exists(response.body().user)
     assert.equal(response.body().user.email, 'new@test.com')
-    assert.equal(response.body().user.firstName, 'New')
-    assert.equal(response.body().user.lastName, 'User')
+    assert.equal(response.body().user.pseudo, 'NewUser')
     assert.exists(response.body().accessToken)
     assert.exists(response.body().refreshToken)
     assert.notExists(response.body().user.password)
@@ -24,8 +22,7 @@ test.group('Auth - Register', () => {
     const response = await client.post('/api/auth/register').json({
       email: 'not-an-email',
       password: 'password123',
-      firstName: 'Test',
-      lastName: 'User',
+      pseudo: 'TestUser',
     })
     response.assertStatus(422)
   })
@@ -34,17 +31,24 @@ test.group('Auth - Register', () => {
     const response = await client.post('/api/auth/register').json({
       email: 'valid@test.com',
       password: 'short',
-      firstName: 'Test',
-      lastName: 'User',
+      pseudo: 'TestUser',
     })
     response.assertStatus(422)
   })
 
-  test('fails with missing firstName', async ({ client }) => {
+  test('fails with missing pseudo', async ({ client }) => {
     const response = await client.post('/api/auth/register').json({
       email: 'valid2@test.com',
       password: 'password123',
-      lastName: 'User',
+    })
+    response.assertStatus(422)
+  })
+
+  test('fails with pseudo shorter than 2 chars', async ({ client }) => {
+    const response = await client.post('/api/auth/register').json({
+      email: 'valid3@test.com',
+      password: 'password123',
+      pseudo: 'A',
     })
     response.assertStatus(422)
   })

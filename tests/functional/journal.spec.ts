@@ -116,6 +116,58 @@ test.group('Journal - Entries', () => {
     response.assertStatus(422)
   })
 
+  test('accepts emotion=other with customEmotion', async ({ client, assert }) => {
+    const { token } = await createAuthenticatedUser()
+
+    const response = await client
+      .post('/api/journal/entries')
+      .header('Authorization', `Bearer ${token}`)
+      .json({
+        title: 'Custom mood',
+        content: 'Quelque chose entre deux',
+        emotion: 'other',
+        customEmotion: 'mélancolique',
+      })
+
+    response.assertStatus(201)
+    assert.equal(response.body().emotion, 'other')
+    assert.equal(response.body().customEmotion, 'mélancolique')
+  })
+
+  test('rejects customEmotion longer than 80 chars', async ({ client }) => {
+    const { token } = await createAuthenticatedUser()
+
+    const response = await client
+      .post('/api/journal/entries')
+      .header('Authorization', `Bearer ${token}`)
+      .json({
+        title: 'x',
+        content: 'y',
+        emotion: 'other',
+        customEmotion: 'a'.repeat(81),
+      })
+
+    response.assertStatus(422)
+  })
+
+  test('ignores customEmotion when emotion is not other', async ({ client, assert }) => {
+    const { token } = await createAuthenticatedUser()
+
+    const response = await client
+      .post('/api/journal/entries')
+      .header('Authorization', `Bearer ${token}`)
+      .json({
+        title: 'Standard',
+        content: 'Content',
+        emotion: 'hopeful',
+        customEmotion: 'should be ignored',
+      })
+
+    response.assertStatus(201)
+    assert.equal(response.body().emotion, 'hopeful')
+    assert.isNull(response.body().customEmotion)
+  })
+
   test('returns 401 without auth', async ({ client }) => {
     const response = await client.get('/api/journal/entries')
     response.assertStatus(401)

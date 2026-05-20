@@ -143,4 +143,36 @@ test.group('Memories', () => {
 
     response.assertStatus(404)
   })
+
+  test('stores assetId on create', async ({ client, assert }) => {
+    const { token } = await createAuthenticatedUser()
+
+    const response = await client
+      .post('/api/memories')
+      .header('Authorization', `Bearer ${token}`)
+      .json({ assetId: 'ABC-123', uri: 'ph://abc.jpg', stage: 'identified' })
+
+    response.assertStatus(201)
+    assert.equal(response.body().assetId, 'ABC-123')
+  })
+
+  test('upserts memory by (user, assetId) instead of duplicating', async ({ client, assert }) => {
+    const { token } = await createAuthenticatedUser()
+
+    const first = await client
+      .post('/api/memories')
+      .header('Authorization', `Bearer ${token}`)
+      .json({ assetId: 'UPSERT-1', uri: 'a.jpg', stage: 'identified' })
+    first.assertStatus(201)
+    const firstId = first.body().id
+
+    const second = await client
+      .post('/api/memories')
+      .header('Authorization', `Bearer ${token}`)
+      .json({ assetId: 'UPSERT-1', uri: 'a.jpg', stage: 'hidden' })
+
+    second.assertStatus(200)
+    assert.equal(second.body().id, firstId)
+    assert.equal(second.body().stage, 'hidden')
+  })
 })

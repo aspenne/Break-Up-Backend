@@ -8,7 +8,7 @@ test.group('Chat - Rooms', () => {
     const response = await client
       .post('/api/chat/rooms')
       .header('Authorization', `Bearer ${token}`)
-      .json({ name: 'Test Room', theme: 'support' })
+      .json({ name: 'Test Room', theme: 'test-create' })
 
     response.assertStatus(201)
     assert.equal(response.body().name, 'Test Room')
@@ -22,7 +22,7 @@ test.group('Chat - Rooms', () => {
     await client
       .post('/api/chat/rooms')
       .header('Authorization', `Bearer ${token}`)
-      .json({ name: 'List Room', theme: 'grief' })
+      .json({ name: 'List Room', theme: 'test-list' })
 
     const response = await client
       .get('/api/chat/rooms')
@@ -38,7 +38,7 @@ test.group('Chat - Rooms', () => {
     const createRes = await client
       .post('/api/chat/rooms')
       .header('Authorization', `Bearer ${creatorToken}`)
-      .json({ name: 'Join Room', theme: 'rebuilding' })
+      .json({ name: 'Join Room', theme: 'test-join' })
 
     const roomId = createRes.body().id
 
@@ -57,7 +57,7 @@ test.group('Chat - Rooms', () => {
     const createRes = await client
       .post('/api/chat/rooms')
       .header('Authorization', `Bearer ${token}`)
-      .json({ name: 'Dupe Room', theme: 'support' })
+      .json({ name: 'Dupe Room', theme: 'test-dupe' })
 
     const response = await client
       .post(`/api/chat/rooms/${createRes.body().id}/join`)
@@ -73,7 +73,7 @@ test.group('Chat - Rooms', () => {
     const createRes = await client
       .post('/api/chat/rooms')
       .header('Authorization', `Bearer ${token}`)
-      .json({ name: 'Leave Room', theme: 'trust' })
+      .json({ name: 'Leave Room', theme: 'test-leave' })
 
     const response = await client
       .post(`/api/chat/rooms/${createRes.body().id}/leave`)
@@ -89,7 +89,7 @@ test.group('Chat - Rooms', () => {
     const createRes = await client
       .post('/api/chat/rooms')
       .header('Authorization', `Bearer ${creatorToken}`)
-      .json({ name: 'No Leave Room', theme: 'grief' })
+      .json({ name: 'No Leave Room', theme: 'test-noleave' })
 
     const { token: outsiderToken } = await createAuthenticatedUser()
     const response = await client
@@ -112,7 +112,7 @@ test.group('Chat - Messages', () => {
     const createRes = await client
       .post('/api/chat/rooms')
       .header('Authorization', `Bearer ${token}`)
-      .json({ name: 'Msg Room', theme: 'support' })
+      .json({ name: 'Msg Room', theme: 'test-msg' })
 
     const response = await client
       .post(`/api/chat/rooms/${createRes.body().id}/messages`)
@@ -129,7 +129,7 @@ test.group('Chat - Messages', () => {
     const createRes = await client
       .post('/api/chat/rooms')
       .header('Authorization', `Bearer ${token}`)
-      .json({ name: 'Read Msg Room', theme: 'support' })
+      .json({ name: 'Read Msg Room', theme: 'test-readmsg' })
 
     const roomId = createRes.body().id
 
@@ -152,7 +152,7 @@ test.group('Chat - Messages', () => {
     const createRes = await client
       .post('/api/chat/rooms')
       .header('Authorization', `Bearer ${creatorToken}`)
-      .json({ name: 'Forbidden Room', theme: 'support' })
+      .json({ name: 'Forbidden Room', theme: 'test-forbidden' })
 
     const { token: outsiderToken } = await createAuthenticatedUser()
     const response = await client
@@ -169,7 +169,7 @@ test.group('Chat - Messages', () => {
     const createRes = await client
       .post('/api/chat/rooms')
       .header('Authorization', `Bearer ${creatorToken}`)
-      .json({ name: 'Forbidden Read Room', theme: 'support' })
+      .json({ name: 'Forbidden Read Room', theme: 'test-forbidden-read' })
 
     const { token: outsiderToken } = await createAuthenticatedUser()
     const response = await client

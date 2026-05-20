@@ -6,8 +6,7 @@ export async function createAuthenticatedUser(
   overrides?: Partial<{
     email: string
     password: string
-    firstName: string
-    lastName: string
+    pseudo: string
     avatarEmoji: string
   }>
 ) {
@@ -15,8 +14,7 @@ export async function createAuthenticatedUser(
   const user = await User.create({
     email: overrides?.email ?? `testuser${testUserCounter}_${Date.now()}@test.com`,
     password: overrides?.password ?? 'password123',
-    firstName: overrides?.firstName ?? 'Test',
-    lastName: overrides?.lastName ?? `User${testUserCounter}`,
+    pseudo: overrides?.pseudo ?? `Test${testUserCounter}_${Date.now()}`,
     avatarEmoji: overrides?.avatarEmoji ?? '😊',
   })
 

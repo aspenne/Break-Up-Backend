@@ -2,16 +2,27 @@ import { test } from '@japa/runner'
 import { createAuthenticatedUser } from '#tests/helpers'
 
 test.group('Users - Update Profile', () => {
-  test('updates firstName', async ({ client }) => {
+  test('updates pseudo', async ({ client }) => {
     const { token } = await createAuthenticatedUser()
 
     const response = await client
       .patch('/api/users/me')
       .header('Authorization', `Bearer ${token}`)
-      .json({ firstName: 'Updated' })
+      .json({ pseudo: 'NewPseudo' })
 
     response.assertStatus(200)
-    response.assertBodyContains({ user: { firstName: 'Updated' } })
+    response.assertBodyContains({ user: { pseudo: 'NewPseudo' } })
+  })
+
+  test('fails with pseudo shorter than 2 chars', async ({ client }) => {
+    const { token } = await createAuthenticatedUser()
+
+    const response = await client
+      .patch('/api/users/me')
+      .header('Authorization', `Bearer ${token}`)
+      .json({ pseudo: 'X' })
+
+    response.assertStatus(422)
   })
 
   test('updates avatarEmoji', async ({ client }) => {
@@ -39,7 +50,7 @@ test.group('Users - Update Profile', () => {
   })
 
   test('fails without auth', async ({ client }) => {
-    const response = await client.patch('/api/users/me').json({ firstName: 'Hacker' })
+    const response = await client.patch('/api/users/me').json({ pseudo: 'Hacker' })
     response.assertStatus(401)
   })
 })

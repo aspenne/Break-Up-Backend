@@ -23,6 +23,10 @@ export default class extends BaseSchema {
 
   async down() {
     this.defer(async (db) => {
+      // Clear any rows that would violate the restored constraint
+      await db.rawQuery(
+        `DELETE FROM journal_entries WHERE emotion = 'other'`
+      )
       await db.rawQuery(
         `ALTER TABLE journal_entries
          DROP CONSTRAINT IF EXISTS journal_entries_emotion_check`
