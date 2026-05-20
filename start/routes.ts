@@ -50,6 +50,7 @@ router
 router
   .group(() => {
     router.get('/', [MemoriesController, 'index'])
+    router.get('stats', [MemoriesController, 'stats'])
     router.post('/', [MemoriesController, 'store'])
     router.patch(':id', [MemoriesController, 'update'])
     router.delete(':id', [MemoriesController, 'destroy'])

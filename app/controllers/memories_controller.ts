@@ -18,6 +18,35 @@ export default class MemoriesController {
     return response.ok(memories)
   }
 
+  /**
+   * Compteurs agrégés pour l'écran Souvenirs.
+   * sorted = total de photos traitées (toutes étapes confondues).
+   * deleted = effectivement supprimées du device.
+   * kept    = identifiées / encore présentes.
+   */
+  async stats({ auth, response }: HttpContext) {
+    const user = auth.getUserOrFail()
+
+    const rows = await Memory.query()
+      .where('userId', user.id)
+      .select('stage')
+      .count('* as count')
+      .groupBy('stage')
+
+    const byStage: Record<string, number> = {}
+    for (const r of rows as unknown as Array<{ stage: string; count: string | number }>) {
+      byStage[r.stage] = Number(r.count)
+    }
+
+    const deleted = byStage.deleted ?? 0
+    const kept = byStage.identified ?? 0
+    const hidden = byStage.hidden ?? 0
+    const archived = byStage.archived ?? 0
+    const sorted = deleted + kept + hidden + archived
+
+    return response.ok({ deleted, kept, hidden, archived, sorted })
+  }
+
   async store({ auth, request, response }: HttpContext) {
     const user = auth.getUserOrFail()
     const data = await request.validateUsing(createMemoryValidator)
